@@ -1,5 +1,6 @@
 package uk.ac.westminster.productsapi.repository;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 import uk.ac.westminster.productsapi.model.DigitalProduct;
 import uk.ac.westminster.productsapi.model.PhysicalProduct;
@@ -7,6 +8,7 @@ import uk.ac.westminster.productsapi.model.Product;
 
 import java.util.*;
 
+@Primary
 @Repository
 public class InMemoryProductRepository implements ProductRepository {
 
