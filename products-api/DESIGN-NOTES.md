@@ -1,0 +1,3 @@
+- **Modularity:** We applied the Dependency Inversion Principle in `ProductService` by having it depend on the `ProductRepository` interface rather than `InMemoryProductRepository`, which separates business logic from data storage.
+- **Testability:** Replacing `@Autowired` field injection with constructor injection in `ProductController` and `ProductService` allows us to instantiate both classes using `new` and pass in fake collaborators during unit tests without booting Spring.
+- **Swap test:** Switching to a real database only requires creating a new database implementation of `ProductRepository` and removing `InMemoryProductRepository`, leaving `ProductService` and `ProductController` completely untouched.

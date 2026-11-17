@@ -1,48 +1,43 @@
 package uk.ac.westminster.productsapi.service;
 
 import org.springframework.stereotype.Service;
-import uk.ac.westminster.productsapi.model.DigitalProduct;
-import uk.ac.westminster.productsapi.model.Discountable;
-import uk.ac.westminster.productsapi.model.PhysicalProduct;
+import uk.ac.westminster.productsapi.exception.ProductNotFoundException;
 import uk.ac.westminster.productsapi.model.Product;
+import uk.ac.westminster.productsapi.repository.ProductRepository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductService {
 
-    private List<Product> products = new ArrayList<>();
-    private Long nextId = 1L;
+    private final ProductRepository prodRepo;
 
-    public ProductService() {
-        products.add(new DigitalProduct(nextId++, "Ebook", 19.99, "https://products-api/products/e-book.pdf", 20));
-        products.add(new PhysicalProduct(nextId++, "File", 5.99, 0.07, "22 cm x 31 cm  x 5 cm"));
+    public ProductService(ProductRepository prodRepo) {
+        this.prodRepo = prodRepo;
     }
 
     public List<Product> getAllProducts() {
-        return products;
+        return prodRepo.findAll();
     }
 
     public Product addProduct(Product product) {
-        product.setId(nextId++);
-        products.add(product);
-        return product;
+        return prodRepo.save(product);
     }
 
-    public Optional<Product> getProductById(Long id) {
-        return products.stream()
-                .filter(p -> p.getId().equals(id))
-                .findFirst();
+    public Product getProductById(Long id) {
+        return prodRepo.findById(id).orElseThrow(
+                () -> new ProductNotFoundException(id));
+
     }
 
     public void deleteProduct(Long id) {
-        products.removeIf(p -> p.getId().equals(id));
+        getProductById(id);
+        prodRepo.delete(id);
     }
 
     public List<Product> findByName(String name) {
-        return products.stream()
+        return prodRepo.findAll().stream()
                 .filter(p -> p.getName().contains(name))
                 .toList();
     }
@@ -51,7 +46,7 @@ public class ProductService {
 
         List<String> summaries = new ArrayList<>();
 
-        for (Product p : products) {
+        for (Product p : prodRepo.findAll()) {
             summaries.add(p.getSummary());
         }
 
